@@ -3,11 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timer and Countdown</title>
-<link rel="stylesheet" href="styles.css">
+<title>Tick Tock Playground</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<h1>Timer and Countdown</h1>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<main class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+	<header class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+		<h1 class="text-3xl font-black tracking-tight text-slate-800 sm:text-4xl">⏱️ Tick Tock Playground</h1>
+		<p class="mt-2 text-base text-slate-600 sm:text-lg">Serious timing power with a playful heartbeat—start fast, pause smart, finish strong.</p>
+		<p id="globalNotice" class="mt-3 hidden rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert" aria-live="assertive"></p>
+	</header>
+
+	<section class="grid gap-6 lg:grid-cols-2">
+		<article id="stopwatchPanel" class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6" aria-labelledby="stopwatchTitle">
+			<h2 id="stopwatchTitle" class="text-xl font-bold text-slate-800">Stopwatch</h2>
+			<p class="mt-1 text-sm text-slate-500">Precision timing with millisecond detail.</p>
+			<div class="mt-4 rounded-xl bg-slate-900 p-4 text-center shadow-inner">
+				<p id="stopwatchDisplay" class="font-mono text-3xl font-bold tracking-widest text-emerald-300 sm:text-4xl" aria-live="polite">00:00:00.000</p>
+			</div>
+
+			<div class="mt-5 grid grid-cols-3 gap-3">
+				<button id="stopwatchStartBtn" type="button" aria-label="Start stopwatch" class="rounded-lg bg-emerald-600 px-3 py-2 font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300">Start</button>
+				<button id="stopwatchPauseBtn" type="button" aria-label="Pause stopwatch" class="rounded-lg bg-amber-500 px-3 py-2 font-semibold text-slate-900 shadow-sm transition hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300">Pause</button>
+				<button id="stopwatchResetBtn" type="button" aria-label="Reset stopwatch" class="rounded-lg bg-slate-700 px-3 py-2 font-semibold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300">Reset</button>
+			</div>
+
+			<div class="mt-4 flex items-center gap-2">
+				<button id="stopwatchLapBtn" type="button" aria-label="Record lap" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300">Lap</button>
+				<p class="text-xs text-slate-500">Tip: In this panel use Enter to start, Space to pause, and Esc to reset.</p>
+			</div>
+
+			<ol id="lapList" class="mt-4 max-h-44 space-y-1 overflow-auto rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700" aria-label="Stopwatch lap times"></ol>
+		</article>
+
+		<article id="countdownPanel" class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6" aria-labelledby="countdownTitle">
+			<h2 id="countdownTitle" class="text-xl font-bold text-slate-800">Countdown</h2>
+			<p class="mt-1 text-sm text-slate-500">Set mm:ss or hh:mm:ss and race the clock.</p>
+
+			<label for="countdownInput" class="mt-4 block text-sm font-medium text-slate-700">Duration (mm:ss or hh:mm:ss)</label>
+			<input id="countdownInput" type="text" inputmode="numeric" placeholder="05:00" aria-label="Countdown duration" aria-describedby="countdownError" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-lg text-slate-900 shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300" />
+			<p id="countdownError" class="mt-2 hidden text-sm font-medium text-rose-600" role="alert" aria-live="polite"></p>
+
+			<div class="mt-4 rounded-xl bg-slate-900 p-4 text-center shadow-inner">
+				<p id="countdownDisplay" class="font-mono text-3xl font-bold tracking-widest text-cyan-300 sm:text-4xl" aria-live="polite">00:00:00.000</p>
+			</div>
+
+			<div class="mt-5 grid grid-cols-3 gap-3">
+				<button id="countdownStartBtn" type="button" aria-label="Start countdown" class="rounded-lg bg-sky-600 px-3 py-2 font-semibold text-white shadow-sm transition hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300">Start</button>
+				<button id="countdownPauseBtn" type="button" aria-label="Pause or resume countdown" class="rounded-lg bg-amber-500 px-3 py-2 font-semibold text-slate-900 shadow-sm transition hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300">Pause</button>
+				<button id="countdownResetBtn" type="button" aria-label="Reset countdown" class="rounded-lg bg-slate-700 px-3 py-2 font-semibold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300">Reset</button>
+			</div>
+
+			<div class="mt-4 flex items-center gap-2">
+				<input id="beepOnFinish" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-400" checked />
+				<label for="beepOnFinish" class="text-sm text-slate-600">Play a tiny completion beep</label>
+			</div>
+			<p class="mt-2 text-xs text-slate-500">Tip: In this panel use Enter to start, Space to pause/resume, and Esc to reset.</p>
+		</article>
+	</section>
+</main>
 <script src="script.js"></script>
 </body>
 </html>
